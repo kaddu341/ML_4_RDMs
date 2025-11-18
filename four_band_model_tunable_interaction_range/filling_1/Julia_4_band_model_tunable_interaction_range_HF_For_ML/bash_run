@@ -1,0 +1,19 @@
+basic_codes="$(pwd)"
+L=10 # LxL matrices
+number_of_random_initials=1000 # number of random sequences
+index=0
+filling=1
+
+U_value=1 # don't change
+
+num_cpus=8
+
+folder_path="L_${L}_U_${U_value}_number_of_random_initials_${number_of_random_initials}_filling_${filling}"     # _index${index}
+mkdir ${folder_path}
+
+cp batch_file_julia_run ${folder_path}
+# cp "/blue/yujiabin/awwab.azam/hartree-fock-code/datasets/tunable_interaction_range_datasets3/filling_1/output_filling1_6x6_8x8_trial1_july4_${L}x${L}.h5" "${folder_path}/P_HF_ML.h5"
+bash gen_parameter_setup ${L} ${basic_codes} ${U_value} ${number_of_random_initials} ${filling} > ${folder_path}/"Parameters.jl"
+cd ${folder_path}
+sbatch --cpus-per-task=$num_cpus batch_file_julia_run
+cd ..

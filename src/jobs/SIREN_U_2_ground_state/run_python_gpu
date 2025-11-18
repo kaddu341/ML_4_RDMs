@@ -1,0 +1,40 @@
+#!/bin/bash
+#SBATCH --job-name=gpu_ML      # Job name
+#SBATCH --mail-type=END,FAIL         # Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=awwab.azam@ufl.edu    # Where to send mail	
+#SBATCH --partition=hpg-b200                 # GPU partition
+#SBATCH --gpus=1
+#   #SBATCH --gres=gpu:1                # Only 1 GPU for now  
+#SBATCH --nodes=1                    # Run all processes on a single node	
+#SBATCH --ntasks=1                   # Run a single task		
+#SBATCH --cpus-per-task=10            # Number of CPU cores per task
+#SBATCH --mem=64gb                    # Job memory request
+#SBATCH --time=50:00:00              # Time limit hrs:min:sec
+#SBATCH --output=%j.log     # Standard output and error log
+
+echo "Job starting..."
+pwd; hostname; date
+
+# 1. Load the required Python module first.
+echo "Loading Python module..."
+module load python/3.12
+
+# 2. Activate your virtual environment.
+echo "Activating virtual environment..."
+source /blue/yujiabin/awwab.azam/hartree-fock-code/.venv/bin/activate
+
+# 3. (Optional but Recommended) Run diagnostics to confirm the environment in the log.
+echo "--- Environment Diagnostics ---"
+echo "Python executable: $(which python)"
+echo "---------------------------"
+
+for arg in "$@"; do
+    if [[ "$arg" == *.py && -f "$arg" ]]; then
+        echo "Running script: $arg"
+        python "$arg"
+    else
+        echo "Skipping: '$arg' (Not a Python file or missing)"
+    fi
+done
+
+echo "Job finished."

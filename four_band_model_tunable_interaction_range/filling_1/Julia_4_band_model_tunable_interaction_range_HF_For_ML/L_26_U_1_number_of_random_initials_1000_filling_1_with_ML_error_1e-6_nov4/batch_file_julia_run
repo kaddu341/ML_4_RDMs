@@ -1,0 +1,22 @@
+#!/bin/bash
+#SBATCH --job-name=parallel_job      # Job name
+#SBATCH --mail-type=END,FAIL         # Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=awwab.azam@ufl.edu    # Where to send mail
+#SBATCH --qos=yujiabin-b	
+#SBATCH --nodes=1                    # Run all processes on a single node	
+#SBATCH --ntasks=1                   # Run a single task		
+#SBATCH --cpus-per-task=2            # Number of CPU cores per task
+#SBATCH --mem=64gb                    # Job memory request
+#SBATCH --time=20:00:00              # Time limit hrs:min:sec
+#SBATCH --output=%j.log     # Standard output and error log
+ 
+pwd; hostname; date
+
+echo "Running on $SLURM_CPUS_ON_NODE CPU cores"
+
+module purge
+module load julia/1.11.1
+ 
+julia /blue/yujiabin/awwab.azam/hartree-fock-code/four_band_model_tunable_interaction_range/filling_1/Julia_4_band_model_tunable_interaction_range_HF_For_ML/run_file.jl "$(pwd)"
+
+date
